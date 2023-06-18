@@ -22,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
     const router = useRouter()
 
     const handleLogout = () => {
-        //? Handle user logout in the future
+        //TODO Handle user logout in the future
     }
  
   return (

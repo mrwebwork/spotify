@@ -19,7 +19,7 @@ export const ListItem: React.FC<ListItemProps> = ({
     const router = useRouter();
     
     const onClick = () => {
-        //! Add authentication before push 
+        //TODO: Add authentication before push 
         router.push(href);
     }
 

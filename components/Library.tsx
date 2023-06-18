@@ -4,8 +4,7 @@ import {AiOutlinePlus} from 'react-icons/ai';
 
 export const Library = () => {
     const onClick = () => {
-    //? Handle upload later 
-
+    //TODO Handle upload later 
 };
 
     return (
