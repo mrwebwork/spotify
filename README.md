@@ -13,7 +13,3 @@ A comprehensive Spotify clone with Next.js 13.4, React, Tailwind CSS, Supabase, 
 - Advanced Player component
 - Client form validation with react-hook-form
 - Server error handling with react-toast
-
-## License
-
-MIT
