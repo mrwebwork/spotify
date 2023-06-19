@@ -18,7 +18,14 @@ export const ModalProvider = () => {
 
     return (
         <>
-            <Modal/>
+            <Modal
+            title="Allan's Test Modal"
+            description="Test Description Modal"
+            isOpen
+            onChange={() => {}}
+            >
+            Test Children
+            </Modal>
         </>
     );
 }
