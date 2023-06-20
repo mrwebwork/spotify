@@ -4,6 +4,7 @@ import { Button } from "./Button";
 
 import { useUser } from "@/hooks/useUser";
 
+import { FaUserAlt } from "react-icons/fa";
 import {RxCaretLeft} from "react-icons/rx"
 import {RxCaretRight} from "react-icons/rx"
 import {HiHome} from 'react-icons/hi'
@@ -15,7 +16,8 @@ import { twMerge } from "tailwind-merge";
 
 import { useAuthModal } from "@/hooks/useAuthModal";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { FaUserAlt } from "react-icons/fa";
+
+import { toast } from "react-hot-toast";
 
 interface HeaderProps {
     children: React.ReactNode;
@@ -39,7 +41,9 @@ export const Header: React.FC<HeaderProps> = ({
         router.refresh();
 
         if (error) {
-            console.log(error)
+            toast.error(error.message);
+        } else {
+            toast.success('Logged out!');
         }
     }
  
