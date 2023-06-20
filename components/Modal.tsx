@@ -99,7 +99,6 @@ export const Modal: React.FC<ModalProps> = ({
                     </Dialog.Close>
                 </Dialog.Content>
             </Dialog.DialogPortal>
-
         </Dialog.Root>
     )
 }
