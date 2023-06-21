@@ -65,11 +65,14 @@ export const UploadModal = () => {
             } = await supabaseClient
             .storage
             .from('songs')
-            .upload(`song-${values.title}-${uniqueID}`, songFile, {cacheControl: '3600', upsert: false});
+            .upload(`song-${values.title}-${uniqueID}`, songFile, {
+                cacheControl: '3600', 
+                upsert: false
+            });
 
             if (songError) {
-                setIsLoading(false)
-                return toast.error('Failed song upload.')
+                setIsLoading(false);
+                return toast.error('Failed song upload.');
             }
 
             //* Upload image 
@@ -82,8 +85,8 @@ export const UploadModal = () => {
             .upload(`image-${values.title}-${uniqueID}`, imageFile, {cacheControl: '3600', upsert: false});
 
             if (imageError) {
-                setIsLoading(false)
-                return toast.error('Failed image upload.')
+                setIsLoading(false);
+                return toast.error('Failed image upload.');
             }
 
             const {
@@ -93,7 +96,7 @@ export const UploadModal = () => {
             .insert({
                 user_id: user.id,
                 title: values.title,
-                values: values.author,
+                author: values.author,
                 image_path: imageData.path,
                 song_path: songData.path
             });
