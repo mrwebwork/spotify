@@ -5,12 +5,14 @@ import Image from "next/image";
 
 import {FaPlay} from "react-icons/fa"
 
+//* Define ListItemProps interface
 interface ListItemProps {
     image: string;
     name: string;
     href: string;
 }
 
+//* Define ListItem component
 export const ListItem: React.FC<ListItemProps> = ({
     image,
     name,

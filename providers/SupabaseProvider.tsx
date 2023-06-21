@@ -1,9 +1,7 @@
-//! JS code should be executed in 'strict mode'  
 "use client"
 
 import { useState, useEffect } from "react";
 
-//* Importing the Database types and Supabase client creation functions
 import { Database } from "@/types_db";
 import { createClientComponentClient, SupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";

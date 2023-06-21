@@ -19,22 +19,24 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { toast } from "react-hot-toast";
 
+//* Define the props interface for the Header component.
 interface HeaderProps {
     children: React.ReactNode;
     className?: string;
 }
 
+//* Define the Header functional component.
 export const Header: React.FC<HeaderProps> = ({
     children,
     className,
 }) => {
-   
+   //* Use custom hooks and utilities.
     const authModal = useAuthModal();
     const router = useRouter();
-
     const supabaseClient = useSupabaseClient();
     const { user } = useUser();
 
+    //* Define logout handler 
     const handleLogout = async () => {
         const { error } = await supabaseClient.auth.signOut(); 
         //TODO: Reset any playing songs 
@@ -46,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
             toast.success('Logged out!');
         }
     }
- 
+ //* Header component with navigation and login/logout.
   return (
     <div className={twMerge(`
         h-fit 

@@ -1,5 +1,7 @@
+//* Import tailwind-merge for combining Tailwind CSS classes.
 import { twMerge } from "tailwind-merge";
 
+//* Define the props interface for the Box component.
 interface BoxProps {
     children: React.ReactNode;
     className?: string;

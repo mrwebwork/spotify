@@ -8,14 +8,19 @@ import { Box } from "./Box";
 import { SidebarItem } from "./SidebarItem";
 import { Library } from "./Library";
 
+//* Declaring the type for the Sidebar component's properties
 interface SidebarProps {
     children: React.ReactNode
 }
+
+//* Sidebar component using React Function Component with SidebarProps
 export const Sidebar: React.FC<SidebarProps> = ({
     children
 }) => {
+    //* Using Next.js usePathname hook to get the current URL path
     const pathname = usePathname();
 
+    //* Defining sidebar routes with useMemo hook for performance optimization
     const routes = useMemo( () => [
         {
             icon: HiHome,

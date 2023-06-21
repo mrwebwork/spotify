@@ -1,10 +1,9 @@
-//* Import necessary modules and types
 import { User } from "@supabase/auth-helpers-nextjs";
 import { useSessionContext, useUser as useSupaUser } from "@supabase/auth-helpers-react";
 import { UserDetails, Subscription } from "@/types";
 import { useState, createContext, useEffect, useContext } from "react";
 
-//* Define a TypeScript type for the user context
+//* Define a type for the user context
 type UserContextType = {
     accessToken: string | null;
     user: User | null;
@@ -18,7 +17,7 @@ export const UserContext = createContext<UserContextType | undefined>(
     undefined
 );
 
-//* Define a TypeScript interface for component props
+//* Define a interface for component props
 export interface Props {
     [propName: string]: any;
 }

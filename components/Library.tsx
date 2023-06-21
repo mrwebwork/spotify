@@ -8,6 +8,7 @@ import { useUser } from '@/hooks/useUser';
 import { useUploadModal } from '@/hooks/useUploadModal';
 
 export const Library = () => {
+    //* Hooks initialization
     const authModal = useAuthModal();
     const uploadModal = useUploadModal();
     const { user } = useUser();
@@ -19,6 +20,7 @@ export const Library = () => {
 
     //TODO: Check for subscriptions
 
+    //* Open upload modal
     return uploadModal.onOpen();
 };
 

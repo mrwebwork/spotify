@@ -1,11 +1,12 @@
 import { forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
 
+//* Define an interface for the Input component props
 interface InputProps 
     extends React.InputHTMLAttributes<HTMLInputElement>{
 
 }
-
+//* Define the Input functional component
 export const Input = forwardRef<HTMLInputElement, InputProps>(({
     className,
     type,
@@ -13,6 +14,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
     ...props
 }, ref) => {
     return (
+        //* Render an input field
         <input
         type={type}
         className={twMerge(`first-letter:

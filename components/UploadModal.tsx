@@ -16,6 +16,7 @@ import { Input } from "./Input";
 import { Button } from "./Button";
 
 export const UploadModal = () => {
+    //* Initialising state and hooks
     const [isLoading, setIsLoading] = useState(false);
     const uploadModal = useUploadModal();
     const { user } = useUser();
@@ -23,6 +24,7 @@ export const UploadModal = () => {
     const router = useRouter();
 
     //* Using null for the files  
+    //* Initialise react-hook-form methods and set default form values
     const {
         register,
         handleSubmit,
@@ -58,7 +60,7 @@ export const UploadModal = () => {
 
         const uniqueID = uniqid();  
 
-            //* Upload song 
+            //* Upload song to Supabase storage 
             const {
                 data: songData,
                 error: songError,
@@ -75,7 +77,7 @@ export const UploadModal = () => {
                 return toast.error('Failed song upload.');
             }
 
-            //* Upload image 
+            //* Upload image to Supabase storage
             const {
                 data: imageData,
                 error: imageError,
@@ -89,6 +91,7 @@ export const UploadModal = () => {
                 return toast.error('Failed image upload.');
             }
 
+            //* Insert new song record in the Supabase 'songs' table
             const {
                 error: supabaseError
             } = await supabaseClient
@@ -118,6 +121,7 @@ export const UploadModal = () => {
         }
     }
 
+    //* Render the Modal component with a form to upload a new song
     return (
         <Modal
         title="Add a song"

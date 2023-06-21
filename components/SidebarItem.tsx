@@ -2,6 +2,7 @@ import {IconType} from 'react-icons'
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 
+//* Declaring the type for the SidebarItem component's properties
 interface SidebarItemProps {
     icon: IconType;
     label: string;
@@ -9,12 +10,14 @@ interface SidebarItemProps {
     href: string;
 }
 
+//* SidebarItem component using React Function Component with SidebarItemProps
 export const SidebarItem: React.FC<SidebarItemProps> = ({
     icon: Icon,
     label,
     active,
     href
 }) => {
+    //* The component includes a Link component, which is used for navigation
     return (
         <Link href={href} className={twMerge(`
         flex
