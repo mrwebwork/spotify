@@ -1,8 +1,13 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { Button } from './Button';
 
 import { useUser } from '@/hooks/useUser';
+import { useAuthModal } from '@/hooks/useAuthModal';
+
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 import { FaUserAlt } from 'react-icons/fa';
 import { RxCaretLeft } from 'react-icons/rx';
@@ -11,11 +16,9 @@ import { HiHome } from 'react-icons/hi';
 import { BiSearch } from 'react-icons/bi';
 
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { twMerge } from 'tailwind-merge';
-
-import { useAuthModal } from '@/hooks/useAuthModal';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 import { toast } from 'react-hot-toast';
 
@@ -32,6 +35,7 @@ export const Header: React.FC<HeaderProps> = ({ children, className }) => {
   const router = useRouter();
   const supabaseClient = useSupabaseClient();
   const { user } = useUser();
+  const pathname = usePathname();
 
   //* Define logout handler
   const handleLogout = async () => {
@@ -45,6 +49,7 @@ export const Header: React.FC<HeaderProps> = ({ children, className }) => {
       toast.success('Logged out!');
     }
   };
+
   //* Header component with navigation and login/logout.
   return (
     <div
@@ -82,10 +87,16 @@ export const Header: React.FC<HeaderProps> = ({ children, className }) => {
           </button>
         </div>
         <div className="flex md:hidden gap-x-2 items-center">
-          <button className="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
+          <button
+            onClick={() => router.push('/')}
+            className="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition"
+          >
             <HiHome className="text-black" size={20} />
           </button>
-          <button className="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
+          <button
+            onClick={() => router.push('/search')}
+            className="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition"
+          >
             <BiSearch className="text-black" size={20} />
           </button>
         </div>
