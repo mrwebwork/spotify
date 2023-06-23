@@ -1,11 +1,14 @@
 'use client'
 
+import { useState } from "react";
+
 import { Song } from "@/types";
+
+import { usePlayer } from "@/hooks/usePlayer";
 
 import {BsPauseFill, BsPlayFill} from "react-icons/bs";
 import { AiFillBackward, AiFillStepForward } from "react-icons/ai";
 import { HiSpeakerXMark, HiSpeakerWave } from "react-icons/hi2";
-
 
 import { MediaItem } from "./MediaItem";
 import { LikeButton } from "./LikeButton";
@@ -20,8 +23,50 @@ export const PlayerContent: React.FC<PlayerContentProps> = ({
     song, 
     songUrl
 }) => {
-    const Icon = true ? BsPauseFill : BsPlayFill;
-    const VolumeIcon = true ? HiSpeakerXMark : HiSpeakerWave
+    const player = usePlayer();
+    const [volume, setVolume] = useState(1);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const Icon = isPlaying ? BsPauseFill : BsPlayFill;
+    const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
+
+    //* Play the next song in the playlist
+    const onPlayNextSong = () => {
+        if (player.ids.length === 0){
+            return;
+        }
+
+        const currentIndex = player.ids.findIndex((id) => id === player.activeId);
+        //* Check if there is a next song to play  
+        const nextSong = player.ids[currentIndex + 1];
+        //* If song is last in array, reset playlist
+        if (!nextSong) {
+            return player.setId(player.ids[0]);
+        }
+
+        player.setId(nextSong);
+    }
+
+    //* Play the previous song in the playlist
+    const onPlayPreviousSong = () => {
+        if (player.ids.length === 0){
+            return;
+        }
+
+        const currentIndex = player.ids.findIndex((id) => id === player.activeId);
+        //* Check the song BEFORE the one currently playing
+        const previousSong = player.ids[currentIndex - 1];
+        
+        //? What if the song we are currently playing is FIRST in the array & we click on play previous song
+        //! Don't load the same song 
+        //* Load the LAST song in the array, go backwards
+        if (!previousSong) {
+            return player.setId(player.ids[player.ids.length - 1]);
+        }
+
+        player.setId(previousSong);
+    } 
+
     return (
         <div className="
         grid
@@ -68,7 +113,7 @@ export const PlayerContent: React.FC<PlayerContentProps> = ({
                 </div>
             </div>
 
-            {/* Desktop View for the playbutton */}
+            {/* //* Desktop View for the playbutton */}
             <div className="
             hidden
             h-full
@@ -80,7 +125,7 @@ export const PlayerContent: React.FC<PlayerContentProps> = ({
             gap-x-6
             ">
                 <AiFillBackward 
-                onClick={() => {}}
+                onClick={onPlayPreviousSong}
                 size={30}
                 className="
                 text-neutral-400
@@ -106,7 +151,7 @@ export const PlayerContent: React.FC<PlayerContentProps> = ({
                     <Icon size={30} className="text-black"/>
                 </div>
                 <AiFillStepForward 
-                onClick={() => {}}
+                onClick={onPlayNextSong}
                 size={30}
                 className="
                 text-neutral-400
