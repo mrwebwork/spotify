@@ -27,6 +27,7 @@ export const Player = () => {
         h-[80px]
         px-4
         ">
+            {/* //! Using the `key` attribute on this component to destory it and re-load to the new songUrl */}
             <PlayerContent
                 key={songUrl}
                 song={song}
