@@ -1,7 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import { Button } from './Button';
 
 import { useUser } from '@/hooks/useUser';
