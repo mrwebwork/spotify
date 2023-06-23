@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { AuthModal } from "@/components/AuthModal";
-import { UploadModal } from "@/components/UploadModal";
+import { AuthModal } from '@/components/AuthModal';
+import { UploadModal } from '@/components/UploadModal';
 
 export const ModalProvider = () => {
-    const [isMounted, setIsMounted] = useState(false);
-    
-    //* useEffect hook to set isMounted to true after the initial render
-    //* This prevents the modals from rendering on the server-side (SSR)
-    useEffect( () => {
-        setIsMounted(true);
-    }, []);
+  const [isMounted, setIsMounted] = useState(false);
 
-    //* If the component is not mounted, don't render anything
-    if (!isMounted) {
-        return null;
-    }
+  //* useEffect hook to set isMounted to true after the initial render
+  //* This prevents the modals from rendering on the server-side (SSR)
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-    //* Once the component is mounted, render the AuthModal and UploadModal components
-    return (
-        <>
-            <AuthModal/>
-            <UploadModal/>
-        </>
-    );
-}
+  //* If the component is not mounted, don't render anything
+  if (!isMounted) {
+    return null;
+  }
+
+  //* Once the component is mounted, render the AuthModal and UploadModal components
+  return (
+    <>
+      <AuthModal />
+      <UploadModal />
+    </>
+  );
+};
