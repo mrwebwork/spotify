@@ -1,23 +1,17 @@
-import { forwardRef } from "react";
-import { twMerge } from "tailwind-merge";
+import { forwardRef } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 //* Define an interface for the Input component props
-interface InputProps 
-    extends React.InputHTMLAttributes<HTMLInputElement>{
-
-}
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 //* Define the Input functional component
-export const Input = forwardRef<HTMLInputElement, InputProps>(({
-    className,
-    type,
-    disabled,
-    ...props
-}, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, disabled, ...props }, ref) => {
     return (
-        //* Render an input field
-        <input
+      //* Render an input field
+      <input
         type={type}
-        className={twMerge(`first-letter:
+        className={twMerge(
+          `first-letter:
         flex 
         w-full
         rounded-md
@@ -36,13 +30,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
         disabled:opacity-50
         focus:outline-none
         `,
-        className
+          className
         )}
         disabled={disabled}
         ref={ref}
         {...props}
-        />
-    )
-})
+      />
+    );
+  }
+);
 
-Input.displayName = "Input";
+Input.displayName = 'Input';
