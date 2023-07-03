@@ -11,10 +11,12 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-slider": "^1.1.2",
+    "@stripe/stripe-js": "^1.54.1",
     "@supabase/auth-helpers-nextjs": "^0.7.2",
     "@supabase/auth-helpers-react": "^0.4.0",
     "@supabase/auth-ui-react": "^0.4.2",
     "@supabase/auth-ui-shared": "^0.1.6",
+    "@supabase/supabase-js": "^2.26.0",
     "@types/node": "20.3.1",
     "@types/react": "18.2.12",
     "@types/react-dom": "18.2.5",
@@ -35,13 +37,13 @@
     "stripe": "^12.9.0",
     "tailwind-merge": "^1.13.2",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.3",
     "uniqid": "^5.4.0",
     "use-sound": "^4.0.1",
     "zustand": "^4.3.8"
   },
   "devDependencies": {
     "@types/uniqid": "^5.3.2",
-    "supabase": "^1.68.6"
+    "supabase": "^1.68.6",
+    "typescript": "^5.1.6"
   }
 }
