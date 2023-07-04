@@ -2,6 +2,8 @@ import { Sidebar } from '@/components/Sidebar';
 
 import './globals.css';
 
+import { Analytics } from '@vercel/analytics/react';
+
 import { Figtree } from 'next/font/google';
 
 import { SupabaseProvider } from '@/providers/SupabaseProvider';
@@ -46,6 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Player />
           </UserProvider>
         </SupabaseProvider>
+        <Analytics />
       </body>
     </html>
   );
