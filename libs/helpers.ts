@@ -1,24 +1,19 @@
 import { Price } from '@/types';
 
-//* Function to retrieve and format the URL for the application
 export const getURL = () => {
   let url =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    process.env.NEXT_PUBLIC_VERCEL_URL ??
-    'https://localhost:3000';
-
-  //* If the URL does not include 'http' prepend 'https://' to it
+    process?.env?.NEXT_PUBLIC_SITE_URL ?? //* Set this to your site URL in production env.
+    process?.env?.NEXT_PUBLIC_VERCEL_URL ?? //* Automatically set by Vercel.
+    'http://localhost:3000/';
+  //* Make sure to include `https://` when not localhost.
   url = url.includes('http') ? url : `https://${url}`;
-
-  //* If the URL does not end with a '/', append one to it
+  //* Make sure to including trailing `/`.
   url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
-
   return url;
 };
 
-//* Function to post data to a specific URL
 export const postData = async ({ url, data }: { url: string; data?: { price: Price } }) => {
-  console.log('POST REQUEST:', url, data);
+  console.log('posting,', url, data);
 
   const res: Response = await fetch(url, {
     method: 'POST',
@@ -28,15 +23,16 @@ export const postData = async ({ url, data }: { url: string; data?: { price: Pri
   });
 
   if (!res.ok) {
-    console.log('Error in the Post', { url, data, res });
-    throw new Error(res.statusText);
+    console.log('Error in postData', { url, data, res });
+
+    throw Error(res.statusText);
   }
+
   return res.json();
 };
 
-//* Function to convert seconds into a Date object
 export const toDateTime = (secs: number) => {
-  let t = new Date('1970, 0, 1T00:30:00Z'); //* Epoch
+  var t = new Date('1970-01-01T00:30:00Z');
   t.setSeconds(secs);
   return t;
 };

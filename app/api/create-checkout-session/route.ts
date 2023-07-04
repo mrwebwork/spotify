@@ -1,6 +1,6 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 
-import { headers, cookies } from 'next/headers';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { stripe } from '@/libs/stripe';
@@ -9,6 +9,7 @@ import { createOrRetrieveCustomer } from '@/libs/supabaseAdmin';
 
 export async function POST(request: Request) {
   const { price, quantity = 1, metadata = {} } = await request.json();
+
   try {
     const supabase = createRouteHandlerClient({
       cookies,
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
       customer,
       line_items: [
         {
-          price,
+          price: price.id,
           quantity,
         },
       ],
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
         trial_from_plan: true,
         metadata,
       },
-      success_url: `${getURL()}/account}`,
+      success_url: `${getURL()}account`,
       cancel_url: `${getURL()}`,
     });
     return NextResponse.json({ sessionId: session.id });
