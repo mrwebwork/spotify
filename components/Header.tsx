@@ -2,6 +2,7 @@
 
 import { Button } from './Button';
 
+import { usePlayer } from '@/hooks/usePlayer';
 import { useUser } from '@/hooks/useUser';
 import { useAuthModal } from '@/hooks/useAuthModal';
 
@@ -14,7 +15,6 @@ import { HiHome } from 'react-icons/hi';
 import { BiSearch } from 'react-icons/bi';
 
 import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
 
 import { twMerge } from 'tailwind-merge';
 
@@ -33,12 +33,12 @@ export const Header: React.FC<HeaderProps> = ({ children, className }) => {
   const router = useRouter();
   const supabaseClient = useSupabaseClient();
   const { user } = useUser();
-  const pathname = usePathname();
+  const player = usePlayer();
 
   //* Define logout handler
   const handleLogout = async () => {
     const { error } = await supabaseClient.auth.signOut();
-    //TODO: Reset any playing songs
+    player.reset();
     router.refresh();
 
     if (error) {
