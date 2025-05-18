@@ -102,14 +102,9 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
   };
 
   return (
-    <button
-      onClick={handleLike}
-      className="
-        hover:opacity-75
-        transition
-        "
-    >
+    <button onClick={handleLike} className="hover:opacity-75 transition">
       <Icon color={isLiked ? '#1DB954' : 'white'} size={25} />
+      <span className="sr-only"> {isLiked ? 'Unlike' : 'Like'}</span>
     </button>
   );
 };

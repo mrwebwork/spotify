@@ -11,10 +11,9 @@ export const getLikedSongs = async (): Promise<Song[]> => {
     data: { session },
   } = await supabase.auth.getSession();
 
-  // Validate user ID before using in query
   const userId = session?.user?.id;
   if (!userId) {
-    console.log('User not authenticated or missing ID');
+    // console.log('User not authenticated or missing ID');
     return [];
   }
 

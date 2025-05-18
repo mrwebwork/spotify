@@ -17,7 +17,7 @@ export const getSongsByUserId = async (): Promise<Song[]> => {
   // Validate user ID before using in query
   const userId = sessionData.session?.user.id;
   if (!userId) {
-    console.log('User not authenticated or missing ID');
+    // console.log('User not authenticated or missing ID');
     return [];
   }
 
@@ -29,6 +29,7 @@ export const getSongsByUserId = async (): Promise<Song[]> => {
 
   if (error) {
     console.log(error.message);
+    return [];
   }
   return (data as any) || [];
 };

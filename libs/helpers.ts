@@ -23,7 +23,7 @@ export const getURL = () => {
 };
 
 export const postData = async ({ url, data }: { url: string; data?: { price: Price } }) => {
-  console.log('posting,', url, data);
+  // console.log('posting,', url, data);
 
   const res: Response = await fetch(url, {
     method: 'POST',
@@ -33,7 +33,7 @@ export const postData = async ({ url, data }: { url: string; data?: { price: Pri
   });
 
   if (!res.ok) {
-    console.log('Error in postData', { url, data, res });
+    // console.log('Error in postData', { url, data, res });
 
     throw Error(res.statusText);
   }

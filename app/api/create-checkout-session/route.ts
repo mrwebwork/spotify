@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ sessionId: session.id });
   } catch (error: any) {
-    console.log('Checkout session error:', error);
+    // console.log('Checkout session error:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
 }
