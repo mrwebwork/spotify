@@ -1,5 +1,15 @@
 import { Price } from '@/types';
 
+export const validateUuid = (
+  id: string | undefined | null,
+  errorMessage = 'Invalid UUID'
+): string => {
+  if (!id || id === 'undefined') {
+    throw new Error(errorMessage);
+  }
+  return id;
+};
+
 export const getURL = () => {
   let url =
     process?.env?.NEXT_PUBLIC_SITE_URL ?? //* Set this to your site URL in production env.
@@ -13,7 +23,7 @@ export const getURL = () => {
 };
 
 export const postData = async ({ url, data }: { url: string; data?: { price: Price } }) => {
-  console.log('posting,', url, data);
+  // console.log('posting,', url, data);
 
   const res: Response = await fetch(url, {
     method: 'POST',
@@ -23,7 +33,7 @@ export const postData = async ({ url, data }: { url: string; data?: { price: Pri
   });
 
   if (!res.ok) {
-    console.log('Error in postData', { url, data, res });
+    // console.log('Error in postData', { url, data, res });
 
     throw Error(res.statusText);
   }

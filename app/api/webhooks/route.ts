@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import he from 'he';
 
 import { NextResponse } from 'next/server';
 
@@ -34,7 +35,8 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (error: any) {
     console.log('Error message:' + error.message);
-    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
+    const sanitizedMessage = he.encode(error.message || 'Unknown error');
+    return new NextResponse(`Webhook Error: ${sanitizedMessage}`, { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
@@ -53,6 +55,10 @@ export async function POST(request: Request) {
         case 'customer.subscription-updated':
         case 'customer.subscription-deleted':
           const subscription = event.data.object as Stripe.Subscription;
+          // Validate subscription properties before passing to manage function
+          if (!subscription.id || !subscription.customer) {
+            throw new Error('Missing subscription ID or customer ID in webhook event');
+          }
           await manageSubscriptionStatusChange(
             subscription.id,
             subscription.customer.toString(),
@@ -63,9 +69,21 @@ export async function POST(request: Request) {
           const checkoutSession = event.data.object as Stripe.Checkout.Session;
           if (checkoutSession.mode === 'subscription') {
             const subscriptionId = checkoutSession.subscription;
+            const customerId = checkoutSession.customer;
+
+            // Validate subscription and customer IDs before proceeding
+            if (
+              !subscriptionId ||
+              subscriptionId === 'undefined' ||
+              !customerId ||
+              customerId === 'undefined'
+            ) {
+              throw new Error('Missing subscription ID or customer ID in checkout session');
+            }
+
             await manageSubscriptionStatusChange(
               subscriptionId as string,
-              checkoutSession.customer as string,
+              customerId as string,
               true
             );
           }

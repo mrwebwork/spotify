@@ -5,7 +5,7 @@ import { Database } from '@/types_db';
 import { Price, Product } from '@/types';
 
 import { stripe } from './stripe';
-import { toDateTime } from './helpers';
+import { toDateTime, validateUuid } from './helpers';
 
 export const supabaseAdmin = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -44,10 +44,14 @@ const upsertPriceRecord = async (price: Stripe.Price) => {
 
   const { error } = await supabaseAdmin.from('prices').upsert([priceData]);
   if (error) throw error;
-  console.log(`Price inserted/updated: ${price.id}`);
+  // console.log(`Price inserted/updated: ${price.id}`);
 };
 
 const createOrRetrieveCustomer = async ({ email, uuid }: { email: string; uuid: string }) => {
+  if (!uuid || uuid === 'undefined') {
+    throw new Error('Invalid UUID provided');
+  }
+
   const { data, error } = await supabaseAdmin
     .from('customers')
     .select('stripe_customer_id')
@@ -65,13 +69,18 @@ const createOrRetrieveCustomer = async ({ email, uuid }: { email: string; uuid: 
       .from('customers')
       .insert([{ id: uuid, stripe_customer_id: customer.id }]);
     if (supabaseError) throw supabaseError;
-    console.log(`New customer created and inserted for ${uuid}.`);
+    // console.log(`New customer created and inserted for ${uuid}.`);
     return customer.id;
   }
   return data.stripe_customer_id;
 };
 
 const copyBillingDetailsToCustomer = async (uuid: string, payment_method: Stripe.PaymentMethod) => {
+  // Add validation for uuid
+  if (!uuid || uuid === 'undefined') {
+    throw new Error('Invalid UUID provided to copyBillingDetailsToCustomer');
+  }
+
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
@@ -92,6 +101,15 @@ const manageSubscriptionStatusChange = async (
   customerId: string,
   createAction = false
 ) => {
+  // Add validation for subscription and customer IDs
+  if (!subscriptionId || subscriptionId === 'undefined') {
+    throw new Error('Invalid subscription ID provided');
+  }
+
+  if (!customerId || customerId === 'undefined') {
+    throw new Error('Invalid customer ID provided');
+  }
+
   // Get customer's UUID from mapping table.
   const { data: customerData, error: noCustomerError } = await supabaseAdmin
     .from('customers')
@@ -100,7 +118,17 @@ const manageSubscriptionStatusChange = async (
     .single();
   if (noCustomerError) throw noCustomerError;
 
+  // Validate that customerData exists and has an id
+  if (!customerData || !customerData.id) {
+    throw new Error(`No customer found with Stripe ID: ${customerId}`);
+  }
+
   const { id: uuid } = customerData!;
+
+  // Validate uuid after extraction
+  if (!uuid || uuid === 'undefined') {
+    throw new Error(`Invalid UUID extracted from customer data for Stripe ID: ${customerId}`);
+  }
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
     expand: ['default_payment_method'],
@@ -132,7 +160,7 @@ const manageSubscriptionStatusChange = async (
 
   const { error } = await supabaseAdmin.from('subscriptions').upsert([subscriptionData]);
   if (error) throw error;
-  console.log(`Inserted/updated subscription [${subscription.id}] for user [${uuid}]`);
+  // console.log(`Inserted/updated subscription [${subscription.id}] for user [${uuid}]`);
 
   // For a new subscription copy the billing details to the customer object.
   // NOTE: This is a costly operation and should happen at the very end.
