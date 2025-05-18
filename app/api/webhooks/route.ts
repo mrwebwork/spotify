@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import he from 'he';
 
 import { NextResponse } from 'next/server';
 
@@ -34,7 +35,8 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (error: any) {
     console.log('Error message:' + error.message);
-    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
+    const sanitizedMessage = he.encode(error.message || 'Unknown error');
+    return new NextResponse(`Webhook Error: ${sanitizedMessage}`, { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
