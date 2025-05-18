@@ -30,6 +30,12 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
       return;
     }
 
+    // Make sure we have valid IDs
+    if (!songId || songId === 'undefined') {
+      console.error('Invalid song ID');
+      return;
+    }
+
     const fetchData = async () => {
       //* Find song in liked_songs table
       const { data, error } = await supabaseClient
@@ -53,6 +59,17 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
   const handleLike = async () => {
     if (!user) {
       return authModal.onOpen();
+    }
+
+    // Validate user ID and song ID
+    if (!user.id || user.id === 'undefined') {
+      toast.error('User ID is invalid');
+      return;
+    }
+
+    if (!songId || songId === 'undefined') {
+      toast.error('Song ID is invalid');
+      return;
     }
 
     if (isLiked) {
@@ -85,14 +102,9 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
   };
 
   return (
-    <button
-      onClick={handleLike}
-      className="
-        hover:opacity-75
-        transition
-        "
-    >
+    <button onClick={handleLike} className="hover:opacity-75 transition">
       <Icon color={isLiked ? '#1DB954' : 'white'} size={25} />
+      <span className="sr-only"> {isLiked ? 'Unlike' : 'Like'}</span>
     </button>
   );
 };

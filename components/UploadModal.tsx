@@ -82,6 +82,12 @@ export const UploadModal = () => {
         return toast.error('Failed image upload.');
       }
 
+      // Validate user ID before database operation
+      if (!user.id || user.id === 'undefined') {
+        setIsLoading(false);
+        return toast.error('Invalid user ID');
+      }
+
       //* Insert new song record in the Supabase 'songs' table
       const { error: supabaseError } = await supabaseClient.from('songs').insert({
         user_id: user.id,

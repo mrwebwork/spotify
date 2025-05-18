@@ -1,5 +1,4 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -18,9 +17,14 @@ export async function POST(request: Request) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Validate user and user ID before proceeding
+    if (!user || !user.id) {
+      return new NextResponse('User not authenticated or invalid user ID', { status: 401 });
+    }
+
     const customer = await createOrRetrieveCustomer({
-      uuid: user?.id || '',
-      email: user?.email || '',
+      uuid: user.id, // No fallback to empty string
+      email: user.email || '',
     });
 
     const session = await stripe.checkout.sessions.create({
@@ -44,7 +48,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ sessionId: session.id });
   } catch (error: any) {
-    console.log(error);
+    // console.log('Checkout session error:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
 }

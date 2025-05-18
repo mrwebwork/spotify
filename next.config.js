@@ -1,7 +1,16 @@
-/** @type {import('next').NextConfig} */
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
   images: {
-    domains: ["meggkopiinwpefsqnqac.supabase.co"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'meggkopiinwpefsqnqac.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/images/**',
+      },
+    ],
   },
 };
 
