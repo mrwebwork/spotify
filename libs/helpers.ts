@@ -1,5 +1,15 @@
 import { Price } from '@/types';
 
+export const validateUuid = (
+  id: string | undefined | null,
+  errorMessage = 'Invalid UUID'
+): string => {
+  if (!id || id === 'undefined') {
+    throw new Error(errorMessage);
+  }
+  return id;
+};
+
 export const getURL = () => {
   let url =
     process?.env?.NEXT_PUBLIC_SITE_URL ?? //* Set this to your site URL in production env.

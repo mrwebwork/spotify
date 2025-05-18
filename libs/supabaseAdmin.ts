@@ -5,7 +5,7 @@ import { Database } from '@/types_db';
 import { Price, Product } from '@/types';
 
 import { stripe } from './stripe';
-import { toDateTime } from './helpers';
+import { toDateTime, validateUuid } from './helpers';
 
 export const supabaseAdmin = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -48,6 +48,10 @@ const upsertPriceRecord = async (price: Stripe.Price) => {
 };
 
 const createOrRetrieveCustomer = async ({ email, uuid }: { email: string; uuid: string }) => {
+  if (!uuid || uuid === 'undefined') {
+    throw new Error('Invalid UUID provided');
+  }
+
   const { data, error } = await supabaseAdmin
     .from('customers')
     .select('stripe_customer_id')
@@ -72,6 +76,11 @@ const createOrRetrieveCustomer = async ({ email, uuid }: { email: string; uuid: 
 };
 
 const copyBillingDetailsToCustomer = async (uuid: string, payment_method: Stripe.PaymentMethod) => {
+  // Add validation for uuid
+  if (!uuid || uuid === 'undefined') {
+    throw new Error('Invalid UUID provided to copyBillingDetailsToCustomer');
+  }
+
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
@@ -92,6 +101,15 @@ const manageSubscriptionStatusChange = async (
   customerId: string,
   createAction = false
 ) => {
+  // Add validation for subscription and customer IDs
+  if (!subscriptionId || subscriptionId === 'undefined') {
+    throw new Error('Invalid subscription ID provided');
+  }
+
+  if (!customerId || customerId === 'undefined') {
+    throw new Error('Invalid customer ID provided');
+  }
+
   // Get customer's UUID from mapping table.
   const { data: customerData, error: noCustomerError } = await supabaseAdmin
     .from('customers')
@@ -100,7 +118,17 @@ const manageSubscriptionStatusChange = async (
     .single();
   if (noCustomerError) throw noCustomerError;
 
+  // Validate that customerData exists and has an id
+  if (!customerData || !customerData.id) {
+    throw new Error(`No customer found with Stripe ID: ${customerId}`);
+  }
+
   const { id: uuid } = customerData!;
+
+  // Validate uuid after extraction
+  if (!uuid || uuid === 'undefined') {
+    throw new Error(`Invalid UUID extracted from customer data for Stripe ID: ${customerId}`);
+  }
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
     expand: ['default_payment_method'],
