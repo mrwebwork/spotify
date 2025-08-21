@@ -11,6 +11,7 @@ import {
   upsertPriceRecord,
   manageSubscriptionStatusChange,
 } from '@/libs/supabaseAdmin';
+import { log } from '@/libs/logger';
 
 const relevantEvents = new Set([
   'product.created',
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
     }
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (error: any) {
-    console.error('Webhook signature verification failed:', error.message);
+    log.error('Webhook signature verification failed', { message: error.message });
     // Sanitize error message to prevent information disclosure
     const sanitizedMessage = he.encode(error.message || 'Unknown error');
     return new NextResponse(`Webhook Error: ${sanitizedMessage}`, { status: 400 });
@@ -96,7 +97,7 @@ export async function POST(request: Request) {
           throw new Error('Unhandled relevant event');
       }
     } catch (error) {
-      console.error('Webhook processing error:', error);
+      log.error('Webhook processing error', error);
       // Don't expose internal error details to prevent information disclosure
       return new NextResponse('Webhook processing failed', { status: 400 });
     }

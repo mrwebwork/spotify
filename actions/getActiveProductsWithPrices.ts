@@ -1,6 +1,7 @@
 import { ProductWithPrice } from '@/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { log } from '@/libs/logger';
 
 export const getActiveProductsWithPrices = async (): Promise<ProductWithPrice[]> => {
   const supabase = createServerComponentClient({
@@ -16,7 +17,7 @@ export const getActiveProductsWithPrices = async (): Promise<ProductWithPrice[]>
     .order('unit_amount', { foreignTable: 'prices' });
 
   if (error) {
-    console.log(error);
+    log.error('Failed to fetch active products with prices', error);
   }
 
   return (data as any) || [];

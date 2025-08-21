@@ -10,6 +10,7 @@ import { useUser } from '@/hooks/useUser';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { toast } from 'react-hot-toast';
+import { log } from '@/libs/logger';
 
 interface LikeButtonProps {
   songId: string;
@@ -32,7 +33,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
 
     // Make sure we have valid IDs
     if (!songId || songId === 'undefined') {
-      console.error('Invalid song ID');
+      log.warn('Invalid song ID provided to LikeButton', { songId });
       return;
     }
 

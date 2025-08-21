@@ -2,6 +2,7 @@ import { User } from '@supabase/auth-helpers-nextjs';
 import { useSessionContext, useUser as useSupaUser } from '@supabase/auth-helpers-react';
 import { UserDetails, Subscription } from '@/types';
 import { useState, createContext, useEffect, useContext } from 'react';
+import { log } from '@/libs/logger';
 
 //* Define a type for the user context
 type UserContextType = {
@@ -59,7 +60,7 @@ export const MyUserContextProvider = (props: Props) => {
             setUserDetails(userDetailsPromise.value?.data as UserDetails);
           } else {
             //! Log an error if the promise for details is rejected
-            console.error(userDetailsPromise.reason);
+            log.error('Failed to fetch user details', userDetailsPromise.reason);
           }
 
           //* If the subscription promise is fulfilled, set the subscription state
@@ -67,7 +68,7 @@ export const MyUserContextProvider = (props: Props) => {
             setSubscription(subscriptionPromise.value?.data as Subscription);
           } else {
             //! Log an error if the promise for subscriptions is rejected
-            console.error(subscriptionPromise.reason);
+            log.error('Failed to fetch subscription', subscriptionPromise.reason);
           }
 
           setIsLoadingData(false);

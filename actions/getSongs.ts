@@ -1,6 +1,7 @@
 import { Song } from "@/types";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers"
+import { log } from "@/libs/logger";
 
 //* Fetch song data 
 export const getSongs = async (): Promise<Song[]> => {
@@ -16,7 +17,7 @@ export const getSongs = async (): Promise<Song[]> => {
     .order('created_at', {ascending: false});
 
     if (error) {
-       console.log(error) 
+       log.error('Failed to fetch songs', error);
     }
 
     return (data as any) || [];

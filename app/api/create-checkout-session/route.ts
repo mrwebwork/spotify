@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/libs/stripe';
 import { getURL } from '@/libs/helpers';
 import { createOrRetrieveCustomer } from '@/libs/supabaseAdmin';
+import { log } from '@/libs/logger';
 
 export async function POST(request: Request) {
   const { price, quantity = 1, metadata = {} } = await request.json();
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ sessionId: session.id });
   } catch (error: any) {
-    // console.log('Checkout session error:', error);
+    log.error('Checkout session error', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
 }

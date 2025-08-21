@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/libs/stripe';
 import { getURL } from '@/libs/helpers';
 import { createOrRetrieveCustomer } from '@/libs/supabaseAdmin';
+import { log } from '@/libs/logger';
 
 export async function POST() {
   try {
@@ -36,7 +37,7 @@ export async function POST() {
 
     return NextResponse.json({ url });
   } catch (error) {
-    console.error('Customer portal error:', error);
+    log.error('Customer portal error', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
 }

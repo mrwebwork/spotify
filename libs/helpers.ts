@@ -1,4 +1,5 @@
 import { Price } from '@/types';
+import { log } from './logger';
 
 export const validateUuid = (
   id: string | undefined | null,
@@ -57,7 +58,7 @@ export const getURL = () => {
 };
 
 export const postData = async ({ url, data }: { url: string; data?: { price: Price } }) => {
-  // console.log('posting,', url, data);
+  log.debug('Posting data to URL', { url, data });
 
   const res: Response = await fetch(url, {
     method: 'POST',
@@ -67,8 +68,7 @@ export const postData = async ({ url, data }: { url: string; data?: { price: Pri
   });
 
   if (!res.ok) {
-    // console.log('Error in postData', { url, data, res });
-
+    log.error('Error in postData', { url, data, statusText: res.statusText, status: res.status });
     throw Error(res.statusText);
   }
 

@@ -6,6 +6,7 @@ import { Price, Product } from '@/types';
 
 import { stripe } from './stripe';
 import { toDateTime, validateUuid, validateEnvVar } from './helpers';
+import { log } from './logger';
 
 // Secure Supabase admin client with environment validation
 export const supabaseAdmin = createClient<Database>(
@@ -25,8 +26,8 @@ const upsertProductRecord = async (product: Stripe.Product) => {
 
   const { error } = await supabaseAdmin.from('products').upsert([productData]);
   if (error) throw error;
-  // Production logging should use proper logging service instead of console
-  // console.log(`Product inserted/updated: ${product.id}`);
+  
+  log.info('Product upserted successfully', { productId: product.id, productName: product.name });
 };
 
 const upsertPriceRecord = async (price: Stripe.Price) => {

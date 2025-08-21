@@ -2,6 +2,7 @@ import { Song } from "@/types";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers"
 import { getSongs } from "./getSongs";
+import { log } from "@/libs/logger";
 
 export const getSongsByTitle = async (title: string): Promise<Song[]> => {
     const supabase = createServerComponentClient({
@@ -20,7 +21,7 @@ export const getSongsByTitle = async (title: string): Promise<Song[]> => {
     .order('created_at', {ascending: false});
 
     if (error) {
-       console.log(error) 
+       log.error('Failed to search songs by title', error);
     }
 
     return (data as any) || [];

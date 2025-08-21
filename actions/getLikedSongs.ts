@@ -1,6 +1,7 @@
 import { Song } from '@/types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { log } from '@/libs/logger';
 
 export const getLikedSongs = async (): Promise<Song[]> => {
   const supabase = createServerComponentClient({
@@ -13,7 +14,7 @@ export const getLikedSongs = async (): Promise<Song[]> => {
 
   const userId = session?.user?.id;
   if (!userId) {
-    // console.log('User not authenticated or missing ID');
+    log.info('User not authenticated, returning empty liked songs list');
     return [];
   }
 
@@ -24,7 +25,7 @@ export const getLikedSongs = async (): Promise<Song[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.log(error);
+    log.error('Failed to fetch liked songs', error);
     return [];
   }
 
