@@ -22,7 +22,6 @@ const sanitizeInput = (input, allowHtml = false) => {
 
   // For HTML contexts, use DOMPurify with strict configuration
   // Note: DOMPurify requires a DOM environment, so we check if it's available
-  if (typeof window !== 'undefined' && global.DOMPurify) {
   if (typeof window !== 'undefined' && window.DOMPurify) {
     return window.DOMPurify.sanitize(input, {
       ALLOWED_TAGS: [], // Allow no HTML tags for maximum security

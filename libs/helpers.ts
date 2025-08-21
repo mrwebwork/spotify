@@ -11,21 +11,46 @@ export const validateUuid = (
   return id;
 };
 
-export const validateUuid = (
-  id: string | undefined | null,
-  errorMessage = 'Invalid UUID'
-): string => {
-  if (!id || id === 'undefined') {
-    throw new Error(errorMessage);
+/**
+ * Sanitizes text input to prevent XSS attacks
+ * @param input - The input string to sanitize
+ * @param allowHtml - Whether to allow safe HTML tags (default: false)
+ * @returns Sanitized string safe for rendering
+ */
+export const sanitizeInput = (input: string | null | undefined, allowHtml: boolean = false): string => {
+  if (!input || typeof input !== 'string') {
+    return '';
   }
-  return id;
-};
 
-// Sanitize user input to prevent XSS and injection attacks
-export const sanitizeInput = (input: string): string => {
-  if (!input || typeof input !== 'string') return '';
-  // Remove HTML tags and trim whitespace
-  return input.replace(/<[^>]*>/g, '').trim().slice(0, 255); // Limit length to 255 chars
+  // First, handle basic HTML entity encoding for non-HTML contexts
+  if (!allowHtml) {
+    return input
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;');
+  }
+
+  // For HTML contexts, use DOMPurify with strict configuration
+  // Note: DOMPurify requires a DOM environment, so we check if it's available
+  if (typeof window !== 'undefined' && DOMPurify) {
+    return DOMPurify.sanitize(input, {
+      ALLOWED_TAGS: [], // Allow no HTML tags for maximum security
+      ALLOWED_ATTR: [],
+      KEEP_CONTENT: true, // Keep the text content but strip tags
+    });
+  }
+
+  // Fallback for server-side rendering - basic encoding
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
 };
 
 // Validate file type and size for security
