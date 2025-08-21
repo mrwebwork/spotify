@@ -10,10 +10,16 @@ import { useRouter } from 'next/navigation';
 
 import { useUploadModal } from '@/hooks/useUploadModal';
 import { useUser } from '@/hooks/useUser';
+import { sanitizeInput, validateFileUpload } from '@/libs/helpers';
 
 import { Modal } from './Modal';
 import { Input } from './Input';
 import { Button } from './Button';
+
+// File upload security constants
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit for security
+const ALLOWED_AUDIO_TYPES = ['audio/mpeg'];
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export const UploadModal = () => {
   //* Initialising state and hooks
@@ -42,7 +48,6 @@ export const UploadModal = () => {
   };
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
-    //* Upload to supabase
     try {
       setIsLoading(true);
 
@@ -54,12 +59,36 @@ export const UploadModal = () => {
         return;
       }
 
+      // Validate and sanitize user inputs to prevent security issues
+      const sanitizedTitle = sanitizeInput(values.title);
+      const sanitizedAuthor = sanitizeInput(values.author);
+
+      if (!sanitizedTitle || !sanitizedAuthor) {
+        toast.error('Title and author are required');
+        return;
+      }
+
+      // Validate file uploads for security
+      try {
+        validateFileUpload(songFile, ALLOWED_AUDIO_TYPES, MAX_FILE_SIZE);
+        validateFileUpload(imageFile, ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE);
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Invalid file');
+        return;
+      }
+
+      // Validate user ID to prevent unauthorized operations
+      if (!user.id || user.id === 'undefined') {
+        setIsLoading(false);
+        return toast.error('Invalid user ID');
+      }
+
       const uniqueID = uniqid();
 
-      //* Upload song to Supabase storage
+      // Upload song to Supabase storage with secure file naming
       const { data: songData, error: songError } = await supabaseClient.storage
         .from('songs')
-        .upload(`song-${values.title}-${uniqueID}`, songFile, {
+        .upload(`song-${sanitizedTitle}-${uniqueID}`, songFile, {
           cacheControl: '3600',
           upsert: false,
         });
@@ -69,10 +98,10 @@ export const UploadModal = () => {
         return toast.error('Failed song upload.');
       }
 
-      //* Upload image to Supabase storage
+      // Upload image to Supabase storage with secure file naming
       const { data: imageData, error: imageError } = await supabaseClient.storage
         .from('images')
-        .upload(`image-${values.title}-${uniqueID}`, imageFile, {
+        .upload(`image-${sanitizedTitle}-${uniqueID}`, imageFile, {
           cacheControl: '3600',
           upsert: false,
         });
@@ -82,17 +111,11 @@ export const UploadModal = () => {
         return toast.error('Failed image upload.');
       }
 
-      // Validate user ID before database operation
-      if (!user.id || user.id === 'undefined') {
-        setIsLoading(false);
-        return toast.error('Invalid user ID');
-      }
-
-      //* Insert new song record in the Supabase 'songs' table
+      // Insert new song record with sanitized data
       const { error: supabaseError } = await supabaseClient.from('songs').insert({
         user_id: user.id,
-        title: values.title,
-        author: values.author,
+        title: sanitizedTitle,
+        author: sanitizedAuthor,
         image_path: imageData.path,
         song_path: songData.path,
       });
