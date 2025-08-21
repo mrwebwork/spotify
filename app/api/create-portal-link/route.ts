@@ -23,7 +23,7 @@ export async function POST() {
     if (!user.id) throw new Error('User ID is required');
 
     const customer = await createOrRetrieveCustomer({
-      uuid: user.id, // No fallback to empty string
+      uuid: user.id,
       email: user?.email || '',
     });
 
@@ -37,7 +37,6 @@ export async function POST() {
     return NextResponse.json({ url });
   } catch (error) {
     console.error('Customer portal error:', error);
-    // Don't expose internal error details to prevent information disclosure
     return new NextResponse('Internal Error', { status: 500 });
   }
 }
