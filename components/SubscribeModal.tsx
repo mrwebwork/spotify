@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { toast } from 'react-hot-toast';
 
-import { postData } from '@/libs/helpers';
+import { postData, sanitizeErrorMessage } from '@/libs/helpers';
 import { getStripe } from '@/libs/stripeClient';
 
 import { useUser } from '@/hooks/useUser';
@@ -61,7 +61,7 @@ const SubscribeModal: React.FC<subscribeModalProps> = ({ products }) => {
 
       stripe?.redirectToCheckout({ sessionId });
     } catch (error) {
-      toast.error((error as Error)?.message);
+      toast.error(sanitizeErrorMessage((error as Error)?.message));
     } finally {
       setPriceIdLoading(undefined);
     }

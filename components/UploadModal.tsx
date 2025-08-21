@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 
 import { useUploadModal } from '@/hooks/useUploadModal';
 import { useUser } from '@/hooks/useUser';
+import { sanitizeErrorMessage } from '@/libs/helpers';
 
 import { Modal } from './Modal';
 import { Input } from './Input';
@@ -99,7 +100,7 @@ export const UploadModal = () => {
 
       if (supabaseError) {
         setIsLoading(false);
-        return toast.error(supabaseError.message);
+        return toast.error(sanitizeErrorMessage(supabaseError.message));
       }
 
       router.refresh();

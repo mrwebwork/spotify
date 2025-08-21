@@ -11,7 +11,7 @@ import { Button } from '@/components/Button';
 import { useSubscribeModal } from '@/hooks/useSubscribeModal';
 import { useUser } from '@/hooks/useUser';
 
-import { postData } from '@/libs/helpers';
+import { postData, sanitizeErrorMessage } from '@/libs/helpers';
 
 export const AccountContent = () => {
   const router = useRouter();
@@ -35,7 +35,7 @@ export const AccountContent = () => {
       window.location.assign(url);
     } catch (error) {
       if (error) {
-        toast.error((error as Error).message);
+        toast.error(sanitizeErrorMessage((error as Error).message));
       }
       setLoading(false);
     }

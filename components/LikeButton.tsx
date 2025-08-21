@@ -10,6 +10,7 @@ import { useUser } from '@/hooks/useUser';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { toast } from 'react-hot-toast';
+import { sanitizeErrorMessage } from '@/libs/helpers';
 
 interface LikeButtonProps {
   songId: string;
@@ -80,7 +81,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
         .eq('song_id', songId);
 
       if (error) {
-        toast.error(error.message);
+        toast.error(sanitizeErrorMessage(error.message));
       } else {
         setIsLiked(false);
       }
@@ -91,7 +92,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
       });
 
       if (error) {
-        toast.error(error.message);
+        toast.error(sanitizeErrorMessage(error.message));
       } else {
         setIsLiked(true);
         toast.success('Liked!');
