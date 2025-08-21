@@ -53,6 +53,20 @@ Explore this extensive tutorial to develop a complete Spotify clone from scratch
 - react-hook-form
 - react-toast
 
+## Security & CI/CD
+
+This project includes comprehensive security and CI/CD automation:
+
+- **Security Policy**: See [SECURITY.md](SECURITY.md) for vulnerability reporting
+- **Automated Security Scanning**: CodeQL, OSSF Scorecards, and Dependency Review
+- **CI/CD Pipeline**: Multi-Node.js version testing with caching and security checks
+- **Branch Protection**: Main and dev branches require PR reviews and status checks
+- **Dependency Management**: Automated updates via Dependabot with security filtering
+
+[![CI](https://github.com/mrwebwork/spotify/actions/workflows/ci.yml/badge.svg)](https://github.com/mrwebwork/spotify/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/mrwebwork/spotify/actions/workflows/codeql.yml/badge.svg)](https://github.com/mrwebwork/spotify/actions/workflows/codeql.yml)
+[![Scorecards](https://github.com/mrwebwork/spotify/actions/workflows/scorecards.yml/badge.svg)](https://github.com/mrwebwork/spotify/actions/workflows/scorecards.yml)
+
 ## License
 
 This project is licensed under the terms of the MIT license.

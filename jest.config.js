@@ -3,7 +3,12 @@ module.exports = {
   testMatch: ['**/tests/**/*.test.js'],
   moduleFileExtensions: ['js', 'ts', 'tsx'],
   transform: {
-    '^.+\\.(js|ts|tsx)$': 'babel-jest',
+    '^.+\\.(js|ts|tsx)$': ['babel-jest', {
+      presets: [
+        ['@babel/preset-env', { targets: { node: 'current' } }],
+        '@babel/preset-typescript',
+      ],
+    }],
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
