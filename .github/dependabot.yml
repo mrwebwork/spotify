@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule: { interval: daily, time: "03:00" }
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch: { patterns: ["*"], update-types: [minor, patch] }
+      major: { patterns: ["*"], update-types: [major] }
