@@ -37,8 +37,8 @@ export async function POST(request: Request) {
     }
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (error: any) {
-    console.error('Webhook signature verification failed:', error.message);
-    // Sanitize error message to prevent information disclosure
+
+    console.log('Error message:' + error.message);
     const sanitizedMessage = he.encode(error.message || 'Unknown error');
     return new NextResponse(`Webhook Error: ${sanitizedMessage}`, { status: 400 });
   }
@@ -60,6 +60,7 @@ export async function POST(request: Request) {
         case 'customer.subscription.deleted':
           // Validate subscription data before processing to prevent security issues
           const subscription = event.data.object as Stripe.Subscription;
+          // Validate subscription properties before passing to manage function
           if (!subscription.id || !subscription.customer) {
             throw new Error('Missing subscription ID or customer ID in webhook event');
           }

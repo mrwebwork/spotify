@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 
 import { toast } from 'react-hot-toast';
+import { sanitizeErrorMessage } from '@/libs/helpers';
 
 //* Define the props interface for the Header component.
 interface HeaderProps {
@@ -42,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({ children, className }) => {
     router.refresh();
 
     if (error) {
-      toast.error(error.message);
+      toast.error(sanitizeErrorMessage(error.message));
     } else {
       toast.success('Logged out!');
     }

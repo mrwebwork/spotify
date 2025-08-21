@@ -16,7 +16,7 @@ Explore this extensive tutorial to develop a complete Spotify clone from scratch
 
 - **Authentication**: Secure user registration and login processes with Supabase.
 
-- **Github Authentication Integration**: Enable secure login using Github authentication.
+- **GitHub Authentication Integration**: Enable secure login using Github authentication.
 
 - **File/Image Upload**: Upload files and images using Supabase storage.
 
@@ -61,6 +61,8 @@ This project is licensed under the terms of the MIT license.
 
 Contributions, issues, and feature requests are welcome!
 
-## Contact
+## Get in Touch
 
-Allan Hillman - tech@allanswebwork.info
+<b>Email: </b> tech@allanswebwork.info <br/>
+<b>LinkedIn: </b> [https://www.linkedin.com/in/allanhillman/](https://www.linkedin.com/in/allanhillman/)  <br/>
+<b>Website: </b> [https://allanhillman.com](https://allanhillman.com/)

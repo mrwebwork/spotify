@@ -23,7 +23,7 @@ export async function POST() {
     if (!user.id) throw new Error('User ID is required');
 
     const customer = await createOrRetrieveCustomer({
-      uuid: user.id,
+      uuid: user.id, // No fallback to empty string
       email: user?.email || '',
     });
 

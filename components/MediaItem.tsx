@@ -3,6 +3,7 @@
 import Image from 'next/image';
 
 import { useLoadImage } from '@/hooks/useLoadImage';
+import { sanitizeInput } from '@/libs/helpers';
 
 import { Song } from '@/types';
 
@@ -61,8 +62,8 @@ export const MediaItem: React.FC<MediaItemProps> = ({ data, onClick }) => {
             overflow-hidden
             "
       >
-        <p className="text-white truncate">{data.title}</p>
-        <p className="text-neutral-400 text-sm truncate">{data.author}</p>
+        <p className="text-white truncate">{sanitizeInput(data.title)}</p>
+        <p className="text-neutral-400 text-sm truncate">{sanitizeInput(data.author)}</p>
       </div>
     </div>
   );

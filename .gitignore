@@ -35,4 +35,8 @@ yarn-error.log*
 next-env.d.ts
 
 # supabase password
-password.txt 
+password.txt
+
+# verification scripts
+verify-sanitization.js
+demo-xss-protection.js 

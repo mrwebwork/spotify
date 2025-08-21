@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 
 import { useUploadModal } from '@/hooks/useUploadModal';
 import { useUser } from '@/hooks/useUser';
-import { sanitizeInput, validateFileUpload } from '@/libs/helpers';
+import { sanitizeErrorMessage } from '@/libs/helpers';
 
 import { Modal } from './Modal';
 import { Input } from './Input';
@@ -111,6 +111,13 @@ export const UploadModal = () => {
         return toast.error('Failed image upload.');
       }
 
+    }      // Validate user ID before database operation
+      if (!user.id || user.id === 'undefined') {
+        setIsLoading(false);
+        return toast.error('Invalid user ID');
+      }
+
+      //* Insert new song record in the Supabase 'songs' table
       // Insert new song record with sanitized data
       const { error: supabaseError } = await supabaseClient.from('songs').insert({
         user_id: user.id,
@@ -122,7 +129,7 @@ export const UploadModal = () => {
 
       if (supabaseError) {
         setIsLoading(false);
-        return toast.error(supabaseError.message);
+        return toast.error(sanitizeErrorMessage(supabaseError.message));
       }
 
       router.refresh();

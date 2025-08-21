@@ -5,7 +5,7 @@ import { Database } from '@/types_db';
 import { Price, Product } from '@/types';
 
 import { stripe } from './stripe';
-import { toDateTime, validateUuid, validateEnvVar } from './helpers';
+import { toDateTime, validateUuid } from './helpers';
 
 // Secure Supabase admin client with environment validation
 export const supabaseAdmin = createClient<Database>(
@@ -46,6 +46,7 @@ const upsertPriceRecord = async (price: Stripe.Price) => {
 
   const { error } = await supabaseAdmin.from('prices').upsert([priceData]);
   if (error) throw error;
+  // console.log(`Price inserted/updated: ${price.id}`);
 };
 
 const createOrRetrieveCustomer = async ({ email, uuid }: { email: string; uuid: string }) => {
@@ -70,13 +71,14 @@ const createOrRetrieveCustomer = async ({ email, uuid }: { email: string; uuid: 
       .from('customers')
       .insert([{ id: uuid, stripe_customer_id: customer.id }]);
     if (supabaseError) throw supabaseError;
+    // console.log(`New customer created and inserted for ${uuid}.`);
     return customer.id;
   }
   return data.stripe_customer_id;
 };
 
 const copyBillingDetailsToCustomer = async (uuid: string, payment_method: Stripe.PaymentMethod) => {
-  // Validate UUID to prevent invalid data processing
+  // Add validation for uuid
   if (!uuid || uuid === 'undefined') {
     throw new Error('Invalid UUID provided to copyBillingDetailsToCustomer');
   }
@@ -173,6 +175,7 @@ const manageSubscriptionStatusChange = async (
 
   const { error } = await supabaseAdmin.from('subscriptions').upsert([subscriptionData]);
   if (error) throw error;
+  // console.log(`Inserted/updated subscription [${subscription.id}] for user [${uuid}]`);
 
   // For a new subscription copy the billing details to customer object
   // This is a costly operation and should happen at the very end
