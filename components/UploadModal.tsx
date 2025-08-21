@@ -1,12 +1,11 @@
 'use client';
 
-import uniqid from 'uniqid';
-
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { useRouter } from 'next/navigation';
+import uniqid from 'uniqid';
 
 import { useUploadModal } from '@/hooks/useUploadModal';
 import { useUser } from '@/hooks/useUser';
@@ -16,7 +15,7 @@ import { Modal } from './Modal';
 import { Input } from './Input';
 import { Button } from './Button';
 
-export const UploadModal = () => {
+export const UploadModal: React.FC = () => {
   //* Initialising state and hooks
   const [isLoading, setIsLoading] = useState(false);
   const uploadModal = useUploadModal();
