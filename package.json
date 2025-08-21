@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "merge-analysis": "npx tsx scripts/demo-merge-analysis.ts",
+    "merge-strategy": "npx tsx scripts/merge-strategy.ts"
   },
   "dependencies": {
+    "@octokit/rest": "^22.0.0",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-slider": "^1.1.2",
     "@stripe/stripe-js": "^1.54.1",
@@ -48,6 +51,7 @@
   "devDependencies": {
     "@types/he": "^1.2.3",
     "@types/uniqid": "^5.3.2",
-    "supabase": "^1.68.6"
+    "supabase": "^1.68.6",
+    "tsx": "^4.20.4"
   }
 }
