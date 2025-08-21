@@ -7,9 +7,10 @@ import { Price, Product } from '@/types';
 import { stripe } from './stripe';
 import { toDateTime, validateUuid } from './helpers';
 
+// Secure Supabase admin client with environment validation
 export const supabaseAdmin = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  validateEnvVar('NEXT_PUBLIC_SUPABASE_URL'),
+  validateEnvVar('SUPABASE_SERVICE_ROLE_KEY')
 );
 
 const upsertProductRecord = async (product: Stripe.Product) => {
@@ -24,7 +25,8 @@ const upsertProductRecord = async (product: Stripe.Product) => {
 
   const { error } = await supabaseAdmin.from('products').upsert([productData]);
   if (error) throw error;
-  console.log(`Product inserted/updated: ${product.id}`);
+  // Production logging should use proper logging service instead of console
+  // console.log(`Product inserted/updated: ${product.id}`);
 };
 
 const upsertPriceRecord = async (price: Stripe.Price) => {
@@ -84,13 +86,27 @@ const copyBillingDetailsToCustomer = async (uuid: string, payment_method: Stripe
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
-  //@ts-ignore
-  await stripe.customers.update(customer, { name, phone, address });
+  
+  // Update Stripe customer with proper type handling
+  await stripe.customers.update(customer, { 
+    name: name || undefined, 
+    phone: phone || undefined, 
+    address: address ? {
+      city: address.city || undefined,
+      country: address.country || undefined,
+      line1: address.line1 || undefined,
+      line2: address.line2 || undefined,
+      postal_code: address.postal_code || undefined,
+      state: address.state || undefined
+    } : undefined
+  });
+  
   const { error } = await supabaseAdmin
     .from('users')
     .update({
-      billing_address: { ...address },
-      payment_method: { ...payment_method[payment_method.type] },
+      billing_address: address ? { ...address } : null,
+      // Convert payment method to JSON-compatible format for database storage
+      payment_method: payment_method ? JSON.parse(JSON.stringify(payment_method[payment_method.type as keyof Stripe.PaymentMethod] || {})) : null,
     })
     .eq('id', uuid);
   if (error) throw error;
@@ -133,16 +149,15 @@ const manageSubscriptionStatusChange = async (
   const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
     expand: ['default_payment_method'],
   });
-  // Upsert the latest status of the subscription object.
+  
+  // Build subscription data with proper typing instead of @ts-ignore
   const subscriptionData: Database['public']['Tables']['subscriptions']['Insert'] = {
     id: subscription.id,
     user_id: uuid,
     metadata: subscription.metadata,
-    // @ts-ignore
-    status: subscription.status,
+    status: subscription.status as Database['public']['Tables']['subscriptions']['Insert']['status'],
     price_id: subscription.items.data[0].price.id,
-    // @ts-ignore
-    quantity: subscription.quantity,
+    quantity: subscription.items.data[0].quantity ?? undefined,
     cancel_at_period_end: subscription.cancel_at_period_end,
     cancel_at: subscription.cancel_at ? toDateTime(subscription.cancel_at).toISOString() : null,
     canceled_at: subscription.canceled_at
@@ -162,14 +177,14 @@ const manageSubscriptionStatusChange = async (
   if (error) throw error;
   // console.log(`Inserted/updated subscription [${subscription.id}] for user [${uuid}]`);
 
-  // For a new subscription copy the billing details to the customer object.
-  // NOTE: This is a costly operation and should happen at the very end.
-  if (createAction && subscription.default_payment_method && uuid)
-    //@ts-ignore
+  // For a new subscription copy the billing details to customer object
+  // This is a costly operation and should happen at the very end
+  if (createAction && subscription.default_payment_method && uuid) {
     await copyBillingDetailsToCustomer(
       uuid,
       subscription.default_payment_method as Stripe.PaymentMethod
     );
+  }
 };
 
 export {

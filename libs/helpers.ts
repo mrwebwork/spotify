@@ -11,6 +11,50 @@ export const validateUuid = (
   return id;
 };
 
+export const validateUuid = (
+  id: string | undefined | null,
+  errorMessage = 'Invalid UUID'
+): string => {
+  if (!id || id === 'undefined') {
+    throw new Error(errorMessage);
+  }
+  return id;
+};
+
+// Sanitize user input to prevent XSS and injection attacks
+export const sanitizeInput = (input: string): string => {
+  if (!input || typeof input !== 'string') return '';
+  // Remove HTML tags and trim whitespace
+  return input.replace(/<[^>]*>/g, '').trim().slice(0, 255); // Limit length to 255 chars
+};
+
+// Validate file type and size for security
+export const validateFileUpload = (file: File, allowedTypes: string[], maxSizeBytes: number): void => {
+  if (!file) {
+    throw new Error('No file provided');
+  }
+  
+  // Check file size to prevent DoS attacks
+  if (file.size > maxSizeBytes) {
+    throw new Error(`File size exceeds ${Math.round(maxSizeBytes / 1024 / 1024)}MB limit`);
+  }
+  
+  // Validate MIME type against allowed types for security
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error(`File type ${file.type} not allowed. Allowed types: ${allowedTypes.join(', ')}`);
+  }
+};
+
+// Secure environment variable validation
+export const validateEnvVar = (varName: string, defaultValue?: string): string => {
+  const value = process.env[varName];
+  if (!value) {
+    if (defaultValue !== undefined) return defaultValue;
+    throw new Error(`Required environment variable ${varName} is missing`);
+  }
+  return value;
+};
+
 export const getURL = () => {
   let url =
     process?.env?.NEXT_PUBLIC_SITE_URL ?? //* Set this to your site URL in production env.
@@ -80,7 +124,15 @@ export const sanitizeInput = (input: string | null | undefined, allowHtml: boole
     });
   }
 
-  // Fallback for server-side rendering - basic encoding
+  if (typeof window !== 'undefined' && typeof window.DOMPurify !== 'undefined') {
+    return window.DOMPurify.sanitize(input, {
+      ALLOWED_TAGS: [], // Allow no HTML tags for maximum security
+      ALLOWED_ATTR: [],
+      KEEP_CONTENT: true, // Keep the text content but strip tags
+    });
+  }
+
+  // Fallback for server-side rendering or if DOMPurify is not available - basic encoding
   return input
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
