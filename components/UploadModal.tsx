@@ -18,7 +18,7 @@ import { Button } from './Button';
 
 // File upload security constants
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit for security
-const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/mp3'];
+const ALLOWED_AUDIO_TYPES = ['audio/mpeg'];
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export const UploadModal = () => {
