@@ -85,19 +85,26 @@ const copyBillingDetailsToCustomer = async (uuid: string, payment_method: Stripe
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
   
-  // Update Stripe customer with proper type assertion instead of @ts-ignore
+  // Update Stripe customer with proper type handling
   await stripe.customers.update(customer, { 
     name: name || undefined, 
     phone: phone || undefined, 
-    address: address || undefined 
+    address: address ? {
+      city: address.city || undefined,
+      country: address.country || undefined,
+      line1: address.line1 || undefined,
+      line2: address.line2 || undefined,
+      postal_code: address.postal_code || undefined,
+      state: address.state || undefined
+    } : undefined
   });
   
   const { error } = await supabaseAdmin
     .from('users')
     .update({
-      billing_address: { ...address },
-      // Safely access payment method data with proper typing
-      payment_method: payment_method[payment_method.type as keyof Stripe.PaymentMethod] || {},
+      billing_address: address ? { ...address } : null,
+      // Convert payment method to JSON-compatible format for database storage
+      payment_method: payment_method ? JSON.parse(JSON.stringify(payment_method[payment_method.type as keyof Stripe.PaymentMethod] || {})) : null,
     })
     .eq('id', uuid);
   if (error) throw error;
