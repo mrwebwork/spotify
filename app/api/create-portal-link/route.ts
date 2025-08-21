@@ -36,7 +36,7 @@ export async function POST() {
 
     return NextResponse.json({ url });
   } catch (error) {
-    console.log(error);
+    console.error('Customer portal error:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
 }

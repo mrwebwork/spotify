@@ -31,9 +31,13 @@ export async function POST(request: Request) {
   let event: Stripe.Event;
 
   try {
-    if (!sig || !webhookSecret) return;
+    // Validate webhook signature to ensure request authenticity
+    if (!sig || !webhookSecret) {
+      return new NextResponse('Missing signature or webhook secret', { status: 400 });
+    }
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (error: any) {
+
     console.log('Error message:' + error.message);
     const sanitizedMessage = he.encode(error.message || 'Unknown error');
     return new NextResponse(`Webhook Error: ${sanitizedMessage}`, { status: 400 });
@@ -51,9 +55,10 @@ export async function POST(request: Request) {
           await upsertPriceRecord(event.data.object as Stripe.Price);
           break;
 
-        case 'customer.subscription-created':
-        case 'customer.subscription-updated':
-        case 'customer.subscription-deleted':
+        case 'customer.subscription.created':
+        case 'customer.subscription.updated':
+        case 'customer.subscription.deleted':
+          // Validate subscription data before processing to prevent security issues
           const subscription = event.data.object as Stripe.Subscription;
           // Validate subscription properties before passing to manage function
           if (!subscription.id || !subscription.customer) {
@@ -62,7 +67,7 @@ export async function POST(request: Request) {
           await manageSubscriptionStatusChange(
             subscription.id,
             subscription.customer.toString(),
-            event.type === 'customer.subscription-created'
+            event.type === 'customer.subscription.created'
           );
           break;
         case 'checkout.session.completed':
@@ -92,8 +97,9 @@ export async function POST(request: Request) {
           throw new Error('Unhandled relevant event');
       }
     } catch (error) {
-      console.log(error);
-      return new NextResponse('Webhook Error:', { status: 400 });
+      console.error('Webhook processing error:', error);
+      // Don't expose internal error details to prevent information disclosure
+      return new NextResponse('Webhook processing failed', { status: 400 });
     }
   }
 

@@ -29,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children, songs }) => {
 
   const player = usePlayer();
 
-  //* Defining sidebar routes with useMemo hook for performance optimization
+  // Define sidebar routes with proper dependency to fix React hooks warning
   const routes = useMemo(
     () => [
       {
@@ -45,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children, songs }) => {
         href: '/search',
       },
     ],
-    []
+    [pathname]
   );
 
   return (
