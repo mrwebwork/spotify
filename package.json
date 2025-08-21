@@ -50,6 +50,8 @@
   "devDependencies": {
     "@babel/core": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
     "@types/dompurify": "^3.0.5",
     "@types/he": "^1.2.3",
     "@types/jest": "^30.0.0",
