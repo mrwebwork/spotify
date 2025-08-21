@@ -148,7 +148,7 @@ const manageSubscriptionStatusChange = async (
     metadata: subscription.metadata,
     status: subscription.status as Database['public']['Tables']['subscriptions']['Insert']['status'],
     price_id: subscription.items.data[0].price.id,
-    quantity: subscription.quantity ?? undefined,
+    quantity: subscription.items.data[0].quantity ?? undefined,
     cancel_at_period_end: subscription.cancel_at_period_end,
     cancel_at: subscription.cancel_at ? toDateTime(subscription.cancel_at).toISOString() : null,
     canceled_at: subscription.canceled_at
