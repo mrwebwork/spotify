@@ -20,11 +20,12 @@ export const AccountContent = () => {
 
   const [loading, setLoading] = useState(false);
 
+  // Fix React hooks exhaustive-deps warning by including dependencies
   useEffect(() => {
     if (!isLoading && !user) {
       router.replace('/');
     }
-  }, []);
+  }, [isLoading, router, user]);
 
   const redirectToCustomerPortal = async () => {
     setLoading(true);
