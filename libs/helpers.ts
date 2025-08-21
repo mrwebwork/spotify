@@ -124,7 +124,15 @@ export const sanitizeInput = (input: string | null | undefined, allowHtml: boole
     });
   }
 
-  // Fallback for server-side rendering - basic encoding
+  if (typeof window !== 'undefined' && typeof window.DOMPurify !== 'undefined') {
+    return window.DOMPurify.sanitize(input, {
+      ALLOWED_TAGS: [], // Allow no HTML tags for maximum security
+      ALLOWED_ATTR: [],
+      KEEP_CONTENT: true, // Keep the text content but strip tags
+    });
+  }
+
+  // Fallback for server-side rendering or if DOMPurify is not available - basic encoding
   return input
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
