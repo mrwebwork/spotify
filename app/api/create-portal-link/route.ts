@@ -1,6 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
 import { stripe } from '@/libs/stripe';
@@ -9,9 +7,7 @@ import { createOrRetrieveCustomer } from '@/libs/supabaseAdmin';
 
 export async function POST() {
   try {
-    const supabase = createRouteHandlerClient({
-      cookies,
-    });
+    const supabase = await createClient();
 
     const {
       data: { user },

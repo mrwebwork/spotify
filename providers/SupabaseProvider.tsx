@@ -1,34 +1,59 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-
+import { createContext, useContext, useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { SupabaseClient, Session, User } from '@supabase/supabase-js';
 import { Database } from '@/types_db';
-import { createClientComponentClient, SupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { SessionContextProvider } from '@supabase/auth-helpers-react';
 
-//* Props type for the SupabaseProvider component
+type SupabaseContextType = {
+  supabase: SupabaseClient<Database>;
+  session: Session | null;
+  user: User | null;
+  isLoading: boolean;
+};
+
+const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
+
 interface SupabaseProviderProps {
   children: React.ReactNode;
 }
 
-//* SupabaseProvider component definition
 export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
-  //* Using React's useState to hold the Supabase client object
-  const [supabaseClient, setSupabaseClient] = useState<SupabaseClient | null>(null);
+  const [supabase] = useState(() => createClient());
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  //* useEffect hook to initialize the Supabase client when this component mounts
   useEffect(() => {
-    const client = createClientComponentClient<Database>();
-    setSupabaseClient(client);
-  }, []);
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+    };
 
-  //* If the Supabase client is not initialized, render nothing (or a loading spinner)
-  if (!supabaseClient) {
-    return null; //* or a loading spinner
-  }
+    getSession();
 
-  //* If the Supabase client is available, render the children within the SessionContextProvider
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
   return (
-    <SessionContextProvider supabaseClient={supabaseClient}>{children}</SessionContextProvider>
+    <SupabaseContext.Provider value={{ supabase, session, user, isLoading }}>
+      {children}
+    </SupabaseContext.Provider>
   );
+};
+
+export const useSupabase = () => {
+  const context = useContext(SupabaseContext);
+  if (context === undefined) {
+    throw new Error('useSupabase must be used within a SupabaseProvider');
+  }
+  return context;
 };

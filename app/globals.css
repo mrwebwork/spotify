@@ -2,8 +2,118 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, :root{
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 64%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 18%;
+    --input: 0 0% 15%;
+    --ring: 142 71% 45%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+html, body, :root {
   height: 100%;
-  background-color: black;
+  background-color: hsl(var(--background));
   color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Glass effect utility */
+.glass {
+  background: rgba(18, 18, 18, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Smooth transitions */
+.transition-smooth {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(142 71% 55%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effect */
+.glow-primary {
+  box-shadow: 0 0 20px rgba(30, 215, 96, 0.3);
+}
+
+/* Animation utilities */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out forwards;
 }

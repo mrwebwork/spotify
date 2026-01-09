@@ -1,30 +1,19 @@
 import { Song } from '@/types';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 
 export const getSongsByUserId = async (): Promise<Song[]> => {
-  const supabase = createServerComponentClient({
-    cookies: cookies,
-  });
+  const supabase = await createClient();
 
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  if (sessionError) {
-    console.log(sessionError.message);
-    return [];
-  }
-
-  // Validate user ID before using in query
-  const userId = sessionData.session?.user.id;
-  if (!userId) {
-    // console.log('User not authenticated or missing ID');
+  if (userError || !user?.id) {
     return [];
   }
 
   const { data, error } = await supabase
     .from('songs')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
   if (error) {

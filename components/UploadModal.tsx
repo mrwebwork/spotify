@@ -5,7 +5,7 @@ import uniqid from 'uniqid';
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabase } from '@/providers/SupabaseProvider';
 import { useRouter } from 'next/navigation';
 
 import { useUploadModal } from '@/hooks/useUploadModal';
@@ -16,11 +16,10 @@ import { Input } from './Input';
 import { Button } from './Button';
 
 export const UploadModal = () => {
-  //* Initialising state and hooks
   const [isLoading, setIsLoading] = useState(false);
   const uploadModal = useUploadModal();
   const { user } = useUser();
-  const supabaseClient = useSupabaseClient();
+  const { supabase } = useSupabase();
   const router = useRouter();
 
   //* Using null for the files
@@ -56,8 +55,7 @@ export const UploadModal = () => {
 
       const uniqueID = uniqid();
 
-      //* Upload song to Supabase storage
-      const { data: songData, error: songError } = await supabaseClient.storage
+      const { data: songData, error: songError } = await supabase.storage
         .from('songs')
         .upload(`song-${values.title}-${uniqueID}`, songFile, {
           cacheControl: '3600',
@@ -69,8 +67,7 @@ export const UploadModal = () => {
         return toast.error('Failed song upload.');
       }
 
-      //* Upload image to Supabase storage
-      const { data: imageData, error: imageError } = await supabaseClient.storage
+      const { data: imageData, error: imageError } = await supabase.storage
         .from('images')
         .upload(`image-${values.title}-${uniqueID}`, imageFile, {
           cacheControl: '3600',
@@ -82,14 +79,12 @@ export const UploadModal = () => {
         return toast.error('Failed image upload.');
       }
 
-      // Validate user ID before database operation
       if (!user.id || user.id === 'undefined') {
         setIsLoading(false);
         return toast.error('Invalid user ID');
       }
 
-      //* Insert new song record in the Supabase 'songs' table
-      const { error: supabaseError } = await supabaseClient.from('songs').insert({
+      const { error: supabaseError } = await supabase.from('songs').insert({
         user_id: user.id,
         title: values.title,
         author: values.author,

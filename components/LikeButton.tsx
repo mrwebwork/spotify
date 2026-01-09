@@ -1,13 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
 import { useRouter } from 'next/navigation';
-
 import { useAuthModal } from '@/hooks/useAuthModal';
 import { useUser } from '@/hooks/useUser';
-
-import { useSessionContext } from '@supabase/auth-helpers-react';
+import { useSupabase } from '@/providers/SupabaseProvider';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { toast } from 'react-hot-toast';
 
@@ -17,8 +14,7 @@ interface LikeButtonProps {
 
 export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
   const router = useRouter();
-  const { supabaseClient } = useSessionContext();
-
+  const { supabase } = useSupabase();
   const authModal = useAuthModal();
   const { user } = useUser();
 
@@ -37,8 +33,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
     }
 
     const fetchData = async () => {
-      //* Find song in liked_songs table
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from('liked_songs')
         .select('*')
         .eq('user_id', user.id)
@@ -51,7 +46,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
     };
 
     fetchData();
-  }, [songId, supabaseClient, user?.id]);
+  }, [songId, supabase, user?.id]);
 
   //* Dynamically render icon if the song is liked or not
   const Icon = isLiked ? AiFillHeart : AiOutlineHeart;
@@ -73,7 +68,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
     }
 
     if (isLiked) {
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from('liked_songs')
         .delete()
         .eq('user_id', user.id)
@@ -85,7 +80,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
         setIsLiked(false);
       }
     } else {
-      const { error } = await supabaseClient.from('liked_songs').insert({
+      const { error } = await supabase.from('liked_songs').insert({
         song_id: songId,
         user_id: user.id,
       });
