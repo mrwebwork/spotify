@@ -12,6 +12,16 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config, { dev }) => {
+    // Suppress the warning about serializing big strings in development
+    if (dev) {
+      config.infrastructureLogging = {
+        ...config.infrastructureLogging,
+        level: 'error',
+      };
+    }
+    return config;
+  },
 };
 
 module.exports = nextConfig;
