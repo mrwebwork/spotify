@@ -1,7 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { IoMdClose } from 'react-icons/io';
 
-//* Declaring the type for the Modal component's properties
 interface ModalProps {
   isOpen: boolean;
   onChange: (open: boolean) => void;
@@ -10,60 +9,33 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
-//* Modal component using React Function Component with ModalProps
 export const Modal: React.FC<ModalProps> = ({ isOpen, onChange, title, description, children }) => {
-  //* The Modal component uses Dialog.Root as the parent container
   return (
     <Dialog.Root open={isOpen} defaultOpen={isOpen} onOpenChange={onChange}>
-      <Dialog.DialogPortal>
-        <Dialog.Overlay
-          className="
-                bg-neutral-900/90
-                backdrop-blur-sm
-                fixed
-                inset-0
-                "
+      <Dialog.Portal>
+        <Dialog.Overlay 
+          className="bg-background/80 backdrop-blur-sm fixed inset-0 z-50 animate-fade-in"
         />
         <Dialog.Content
           className="
-                fixed
-                drop-shadow-md
-                border
-                border-neutral-700
-                top-[50%]
-                left-[50%]
-                max-h-full
-                h-full
-                md:h-auto
-                md:max-h-[85vh]
-                w-full
-                md:w-[90vw]
-                md:max-w-[450px]
-                translate-x-[-50%]
-                translate-y-[-50%]
-                rounded-md
-                bg-neutral-800
-                p-[25px]
-                focus:outline-none
-                "
+            fixed z-50
+            top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+            w-full max-w-md
+            max-h-[85vh] overflow-y-auto
+            bg-card border border-border
+            rounded-xl shadow-2xl shadow-black/50
+            p-6
+            animate-scale-in
+            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background
+          "
+          aria-describedby="modal-description"
         >
-          <Dialog.Title
-            className="
-                    text-xl
-                    text-center
-                    font-bold
-                    mb-4
-                    "
-          >
+          <Dialog.Title className="text-xl text-center font-bold mb-2 text-card-foreground">
             {title}
           </Dialog.Title>
-          <Dialog.Description
-            className="
-                    mb-5 
-                    text-sm
-                    leading-normal
-                    text-center
-                    "
+          <Dialog.Description 
+            id="modal-description"
+            className="mb-5 text-sm leading-relaxed text-center text-muted-foreground"
           >
             {description}
           </Dialog.Description>
@@ -71,26 +43,20 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onChange, title, descripti
           <Dialog.Close asChild>
             <button
               className="
-                        text-neutral-400
-                        hover:text-white
-                        absolute
-                        top-[10px]
-                        right-[10px]
-                        inline-flex
-                        h-[25px]
-                        w-[25px]
-                        apperance-none
-                        items-center
-                        justify-center
-                        rounded-full
-                        focus:outline-none
-                        "
+                absolute top-4 right-4
+                p-1.5 rounded-full
+                text-muted-foreground hover:text-foreground
+                hover:bg-secondary
+                transition-colors
+                focus:outline-none focus:ring-2 focus:ring-primary
+              "
+              aria-label="Close modal"
             >
-              <IoMdClose />
+              <IoMdClose size={18} />
             </button>
           </Dialog.Close>
         </Dialog.Content>
-      </Dialog.DialogPortal>
+      </Dialog.Portal>
     </Dialog.Root>
   );
 };

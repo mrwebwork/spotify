@@ -97,9 +97,16 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
   };
 
   return (
-    <button onClick={handleLike} className="hover:opacity-75 transition">
-      <Icon color={isLiked ? '#1DB954' : 'white'} size={25} />
-      <span className="sr-only"> {isLiked ? 'Unlike' : 'Like'}</span>
+    <button 
+      onClick={handleLike} 
+      className="p-2 rounded-full hover:bg-secondary/50 transition-all hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary"
+      aria-label={isLiked ? 'Remove from liked songs' : 'Add to liked songs'}
+      aria-pressed={isLiked}
+    >
+      <Icon 
+        className={isLiked ? 'text-primary' : 'text-muted-foreground hover:text-foreground'} 
+        size={22} 
+      />
     </button>
   );
 };
